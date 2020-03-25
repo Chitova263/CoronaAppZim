@@ -19,8 +19,9 @@ namespace Covid19.Api.Controllers
             _covid19ApiService = covid19ApiService ?? throw new System.ArgumentNullException(nameof(covid19ApiService));
         }
 
+        // GET: api/[controller]/latest?country=""
         [HttpGet]
-        [Route("cases")]
+        [Route("latest")]
         public async Task<ActionResult> GetReportedCasesInLocation([FromQuery] string country)
         {
             var cases = await _covid19ApiService.GetReportedCasesInLocation(country);
@@ -31,6 +32,7 @@ namespace Covid19.Api.Controllers
             return Ok(cases);
         }
 
+        // GET: api/[controller]/locations
         [HttpGet]
         [Route("locations")]
         public async Task<ActionResult> GetLocations()

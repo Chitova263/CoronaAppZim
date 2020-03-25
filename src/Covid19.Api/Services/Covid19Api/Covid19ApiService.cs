@@ -8,12 +8,13 @@ namespace Covid19.Api.Services
     using System.Threading.Tasks;
     using Covid19.Api.Models;
     using Microsoft.Extensions.Logging;
+    using TinyCsvParser.Tokenizer.RFC4180;
 
     public class Covid19ApiService: ICovid19ApiService
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<Covid19ApiService> _logger;
-
+        public static RFC4180Tokenizer Tokenizer => new RFC4180Tokenizer(new Options('"', '\\', ','));
         public Covid19ApiService(IHttpClientFactory httpClientFactory, ILogger<Covid19ApiService> logger)
         {
             _httpClientFactory = httpClientFactory ?? throw new System.ArgumentNullException(nameof(httpClientFactory));
@@ -22,7 +23,7 @@ namespace Covid19.Api.Services
 
         public async Task<IEnumerable<Location>> GetLocations()
         {
-            var locations = new List<Location>();
+            IEnumerable<Location> locations = new List<Location>();
             var request = new HttpRequestMessage(HttpMethod.Get, "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv");
             var httpClient = _httpClientFactory.CreateClient();
             var response = await httpClient.SendAsync(request);
@@ -31,21 +32,18 @@ namespace Covid19.Api.Services
             {
                 //serialize to string
                 var content = await response.Content.ReadAsStringAsync();
-                locations = content.Split(new []{"\n"}, StringSplitOptions.None)
-                    .Skip(1) 
+                locations = content
+                    .Split(new[] { '\n' }, StringSplitOptions.None)
+                    .Skip(1)
                     .SkipLast(1)
-                    .Select(x => x.Split(","))
+                    .Select(x => Tokenizer.Tokenize(x))
                     .Select(x => new Location
                     {
-                        Province = x[0],
                         Country = x[1],
-                        GeoPosition = new GeoPosition 
-                        {
-                            Latitude = x[2],
-                            Longitude = x[3]
-                        }
-                    })
-                    .ToList();
+                        Province = x[0],
+                        Latitude = Double.Parse(x[2].Trim()),
+                        Longitude =  Double.Parse(x[3].Trim())
+                    });
             }
             return locations;
         }
@@ -68,8 +66,6 @@ namespace Covid19.Api.Services
             {
                 var confirmed = await confirmedCasesResponse.Content.ReadAsStringAsync();
                 var deaths = await deathsResponse.Content.ReadAsStringAsync();
-
-                _logger.LogInformation($"Confirmed------- {deaths}");
 
                 var date = confirmed
                     .Split(new []{"\n"}, StringSplitOptions.None)
@@ -95,6 +91,8 @@ namespace Covid19.Api.Services
                 cases.Confirmed = Int32.Parse(result.Last());
                 cases.Country = result[1];
                 cases.Province = result[0];
+                cases.Latitude = Double.Parse(result[2]);
+                cases.Longitude = Double.Parse(result[3]);
                 cases.Deaths = Int32.Parse(res.Last());  
                 cases.TimeStamp = DateTime.Parse(date, CultureInfo.InvariantCulture).Date;                  
             } 
