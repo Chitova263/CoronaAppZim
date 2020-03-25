@@ -1,7 +1,7 @@
-using System;
-
 namespace Covid19.Api.Models
 {
+    using System;
+    
     public class ReportedCases
     {
         public string Country { get; set; }
