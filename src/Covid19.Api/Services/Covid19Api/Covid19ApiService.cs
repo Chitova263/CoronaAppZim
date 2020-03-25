@@ -9,12 +9,12 @@ namespace Covid19.Api.Services
     using Covid19.Api.Models;
     using Microsoft.Extensions.Logging;
 
-    public class CovidAPI: ICovidAPI
+    public class Covid19ApiService: ICovid19ApiService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ILogger<CovidAPI> _logger;
+        private readonly ILogger<Covid19ApiService> _logger;
 
-        public CovidAPI(IHttpClientFactory httpClientFactory, ILogger<CovidAPI> logger)
+        public Covid19ApiService(IHttpClientFactory httpClientFactory, ILogger<Covid19ApiService> logger)
         {
             _httpClientFactory = httpClientFactory ?? throw new System.ArgumentNullException(nameof(httpClientFactory));
             _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));

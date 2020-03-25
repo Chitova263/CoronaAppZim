@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Covid19.Api.Services;
+using Covid19.Api.Services.NewsService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,7 +29,9 @@ namespace Covid19.Api
         {
             services.AddControllers();
             services.AddHttpClient();
-            services.AddTransient<ICovidAPI, CovidAPI>();
+            services.AddTransient<ICovid19ApiService, Covid19ApiService>();
+            services.AddTransient<INewsService, NewsService>();
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +41,8 @@ namespace Covid19.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(config => config.AllowAnyOrigin());
 
             app.UseHttpsRedirection();
 
