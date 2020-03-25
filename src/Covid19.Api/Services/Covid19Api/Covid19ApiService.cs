@@ -32,7 +32,7 @@ namespace Covid19.Api.Services
                 //serialize to string
                 var content = await response.Content.ReadAsStringAsync();
                 locations = content.Split(new []{"\n"}, StringSplitOptions.None)
-                    .Skip(1)  //skip headings
+                    .Skip(1) 
                     .SkipLast(1)
                     .Select(x => x.Split(","))
                     .Select(x => new Location
