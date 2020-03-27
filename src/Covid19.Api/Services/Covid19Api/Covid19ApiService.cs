@@ -93,8 +93,8 @@ namespace Covid19.Api.Services
                 cases.Province = result[0];
                 cases.Latitude = Double.Parse(result[2]);
                 cases.Longitude = Double.Parse(result[3]);
-                cases.Deaths = Int32.Parse(res.Last());  
-                cases.TimeStamp = DateTime.Parse(date, CultureInfo.InvariantCulture).Date;                  
+                cases.Deaths = Int32.Parse(res.Last());
+                cases.TimeStamp = date;               
             } 
             else 
             {

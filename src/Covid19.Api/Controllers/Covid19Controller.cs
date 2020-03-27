@@ -46,5 +46,19 @@ namespace Covid19.Api.Controllers
 
             return Ok(locations);
         }
+        
+        [HttpGet]
+        [Route("news")]
+        public async Task<ActionResult> GetNews([FromQuery] string query)
+        {
+            var response = await _newsService.GetAllNews(query);
+            if(response == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(response);
+        }
+
     }
 }

@@ -10,6 +10,7 @@ namespace Covid19.Api.Models
         public double Longitude { get; set; }
         public int Confirmed { get; set; }
         public int Deaths { get; set; }
-        public DateTime TimeStamp { get; set; }
+        public string TimeStamp { get; set; }
+
     }
 }
