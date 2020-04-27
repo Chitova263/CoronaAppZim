@@ -15,4 +15,7 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /app
 EXPOSE 80
 COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "CoronaAppZim.Api.dll"]
+#ENTRYPOINT ["dotnet", "CoronaAppZim.Api.dll"]
+CMD dotnet CoronaAppZim.Api.dll
+
+
