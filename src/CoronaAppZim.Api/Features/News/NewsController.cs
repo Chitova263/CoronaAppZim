@@ -23,7 +23,6 @@ namespace CoronaAppZim.Api.Features.News
 
         // GET: api/[controller]?query
         [HttpGet]
-        [Route("query")]
         public async Task<ActionResult> GetLatestNews([FromQuery]string query, CancellationToken cancellationToken = default)
         {
             this.logger.LogInformation("--- fetching news");
