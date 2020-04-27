@@ -19,7 +19,7 @@ namespace CoronaAppZim.Api.Services
         }
 
         public Task<LatestReport> GetLatestReportAsync(string country, CancellationToken cancellationToken = default)
-        {
+        { 
             return this.covid19Client.GetLatestReportAsync(country, cancellationToken);
         }
     }

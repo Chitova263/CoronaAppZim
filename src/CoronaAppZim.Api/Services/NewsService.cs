@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CoronaAppZim.Api.Features.News;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace CoronaAppZim.Api.Services
 {
@@ -33,18 +36,17 @@ namespace CoronaAppZim.Api.Services
 
             if (response.IsSuccessStatusCode)
             {
+                var contentStream = await response.Content.ReadAsStreamAsync();
 
-               
-
-                var contentString = await response.Content.ReadAsStringAsync();
-                var story = Newtonsoft.Json.JsonConvert.DeserializeObject<Stories>(contentString);
-
-                this.logger.LogInformation("--- fetching news successful");
-
-                return story;
+                //read the stream using a stream reader
+                using (var streamReader = new StreamReader(contentStream, Encoding.UTF8))
+                using (var textReader = new JsonTextReader(streamReader))
+                {
+                    var jsonSerializer = new JsonSerializer();
+                    var stories = jsonSerializer.Deserialize<Stories>(textReader);
+                    return stories;
+                }
             }
-
-            this.logger.LogInformation("--- fetching news failed");
 
             return null;
         }
