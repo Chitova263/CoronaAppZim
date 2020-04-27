@@ -25,6 +25,7 @@ namespace CoronaAppZim.Api
             services.AddTransient<INewsService, NewsService>();
             services.AddCovid19Client();
             services.AddTransient<ICovidTrackerService, Covid19TrackerService>();
+            services.AddTransient<INotificationService, AWSSNSService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
