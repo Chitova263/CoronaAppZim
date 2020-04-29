@@ -4,8 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
+using CoronaAppZim.Api.Config;
 using CoronaAppZim.Api.Features.Notifications;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace CoronaAppZim.Api.Services
 {
@@ -13,16 +15,18 @@ namespace CoronaAppZim.Api.Services
     {
         private readonly AmazonSimpleNotificationServiceClient _snsClient;
         private readonly ILogger<AWSSNSService> logger;
+        private readonly IOptionsMonitor<AWSSNSSettings> options;
 
-        public AWSSNSService(ILogger<AWSSNSService> logger)
+        public AWSSNSService(ILogger<AWSSNSService> logger, IOptionsMonitor<AWSSNSSettings> options)
         {
             _snsClient = new AmazonSimpleNotificationServiceClient(
-                "AKIATI4IWOOTD62SXCVL",
-                "XsiZtFvlv6iCcxBr3PAMikVgSvHr3qw4mg7Cd1+g",
+                this.options.CurrentValue.AWSAccessKeyId,
+                this.options.CurrentValue.AwsSecretAccessKey,
                 Amazon.RegionEndpoint.USEast1
                 );
            
             this.logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
+            this.options = options ?? throw new System.ArgumentNullException(nameof(options));
         }
         public async Task<bool> SendAsync(Message message, CancellationToken cancellationToken = default)
         {
@@ -41,7 +45,7 @@ namespace CoronaAppZim.Api.Services
             {
                 Message = message.Payload,
                 MessageAttributes = messageAttributes,
-                TopicArn = "arn:aws:sns:us-east-1:225235596198:coronazim-updates",
+                TopicArn = options.CurrentValue.TopicArn,
             };
 
             var publishResponse = await _snsClient.PublishAsync(pubRequest, cancellationToken);

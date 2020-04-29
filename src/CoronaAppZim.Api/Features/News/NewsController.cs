@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CoronaAppZim.Api.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -23,6 +24,7 @@ namespace CoronaAppZim.Api.Features.News
 
         // GET: api/[controller]?query
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetLatestNews([FromQuery]string query, CancellationToken cancellationToken = default)
         {
             this.logger.LogInformation("--- fetching news");

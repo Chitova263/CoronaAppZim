@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CoronaAppZim.Api.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -23,6 +24,8 @@ namespace CoronaAppZim.Api.Features.Tracker
 
         // GET: api/[controller]?country
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> GetLatestReport([FromQuery]string country, CancellationToken cancellationToken = default)
         {
             var response = await this.covidTrackerService.GetLatestReportAsync(country, cancellationToken);
