@@ -66,7 +66,7 @@ namespace CoronaAppZim.Api.Services
         {
             var subscribeRequest = new SubscribeRequest
             {
-                TopicArn = "arn:aws:sns:us-east-1:225235596198:coronazim-updates",
+                TopicArn = this.options.CurrentValue.TopicArn,
                 Protocol = "sms",
                 Endpoint = subscriber.MobileNumber,
             };
