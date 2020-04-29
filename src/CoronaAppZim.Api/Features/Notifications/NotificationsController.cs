@@ -1,6 +1,8 @@
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CoronaAppZim.Api.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -22,6 +24,8 @@ namespace CoronaAppZim.Api.Features.Notifications
         // POST: api/notifications/subscribe
         [HttpPost]
         [Route("subscribe")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Suscribe([FromBody] Subscriber subscriber, CancellationToken cancellationToken = default)
         {
             var response = await this.notificationService.SubscribeAsync(subscriber, cancellationToken);
@@ -33,6 +37,8 @@ namespace CoronaAppZim.Api.Features.Notifications
         // POST: api/notifications/subscribe
         [HttpPost]
         [Route("unsubscribe")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UnSuscribe([FromBody] Subscriber subscriber, CancellationToken cancellationToken = default)
         {
             var response = await this.notificationService.UnSubscribeAsync(subscriber, cancellationToken);
@@ -44,6 +50,8 @@ namespace CoronaAppZim.Api.Features.Notifications
         // POST: api/notifications/sms
         [HttpPost]
         [Route("sms")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> SendSMS([FromBody] Message message, CancellationToken cancellationToken = default)
         {
             var response = await this.notificationService.SendAsync(message, cancellationToken);
