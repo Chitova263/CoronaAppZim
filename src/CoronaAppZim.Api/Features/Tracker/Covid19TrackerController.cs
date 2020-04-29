@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using CoronaAppZim.Api.Services;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,12 +12,12 @@ namespace CoronaAppZim.Api.Features.Tracker
     [Route("api/[controller]")]
     public class Covid19TrackerController : ControllerBase
     {
-        private readonly ICovidTrackerService covidTrackerService;
+        private readonly IMediator mediator;
         private readonly ILogger<Covid19TrackerController> logger;
 
-        public Covid19TrackerController(ICovidTrackerService covidTrackerService, ILogger<Covid19TrackerController> logger)
+        public Covid19TrackerController(IMediator mediator, ILogger<Covid19TrackerController> logger)
         {
-            this.covidTrackerService = covidTrackerService ?? throw new ArgumentNullException(nameof(covidTrackerService));
+            this.mediator = mediator;
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -26,15 +25,9 @@ namespace CoronaAppZim.Api.Features.Tracker
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> GetLatestReport([FromQuery]string country, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> GetLatestReport([FromQuery]GetLatestReportQuery.Request country, CancellationToken cancellationToken = default)
         {
-            var response = await this.covidTrackerService.GetLatestReportAsync(country, cancellationToken);
-
-            if(response.ResponseInfo.StatusCode != HttpStatusCode.OK)
-            {
-                return BadRequest(response);
-            }
-
+            var response = await this.mediator.Send(country, cancellationToken);
             return Ok(response);
         }
     }

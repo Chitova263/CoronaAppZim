@@ -1,4 +1,3 @@
-using CoronaAppZim.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Covid19.Client;
 using CoronaAppZim.Api.Config;
 using Microsoft.OpenApi.Models;
+using MediatR;
+using System.Reflection;
 
 namespace CoronaAppZim.Api
 {
@@ -24,11 +25,10 @@ namespace CoronaAppZim.Api
         {
             services.AddControllers();
             services.AddHttpClient();
-            services.AddTransient<INewsService, NewsService>();
             services.AddCovid19Client();
-            services.AddTransient<ICovidTrackerService, Covid19TrackerService>();
-            services.AddTransient<INotificationService, AWSSNSService>();
+            services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
             services.Configure<AWSSNSSettings>(Configuration.GetSection("AWSSNSConfig"));
+            services.Configure<NewsApiSettings>(Configuration.GetSection("AWSSNSConfig"));
             services.AddSwaggerGen(config =>
             {
                 config.SwaggerDoc("v1", new OpenApiInfo

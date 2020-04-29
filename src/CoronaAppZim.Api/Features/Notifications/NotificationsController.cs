@@ -1,7 +1,6 @@
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using CoronaAppZim.Api.Services;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,12 +11,12 @@ namespace CoronaAppZim.Api.Features.Notifications
     [Route("api/[controller]")]
     public class NotificationsController : ControllerBase
     {
-        private readonly INotificationService notificationService;
         private readonly ILogger<NotificationsController> logger;
+        private readonly IMediator mediator;
 
-        public NotificationsController(INotificationService notificationService, ILogger<NotificationsController> logger)
+        public NotificationsController(IMediator mediator, ILogger<NotificationsController> logger)
         {
-            this.notificationService = notificationService ?? throw new System.ArgumentNullException(nameof(notificationService));
+            this.mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
             this.logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
         }
 
@@ -26,22 +25,22 @@ namespace CoronaAppZim.Api.Features.Notifications
         [Route("subscribe")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Suscribe([FromBody] Subscriber subscriber, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> Suscribe([FromBody] SubscribeCommand.Command command, CancellationToken cancellationToken = default)
         {
-            var response = await this.notificationService.SubscribeAsync(subscriber, cancellationToken);
+            var response = await this.mediator.Send(command, cancellationToken);
 
             if (!response) return BadRequest();
             return Ok();
         }
 
-        // POST: api/notifications/subscribe
+        // POST: api/notifications/usubscribe
         [HttpPost]
         [Route("unsubscribe")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UnSuscribe([FromBody] Subscriber subscriber, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> UnSuscribe([FromBody] UnSubscribeCommand.Command command, CancellationToken cancellationToken = default)
         {
-            var response = await this.notificationService.UnSubscribeAsync(subscriber, cancellationToken);
+            var response = await this.mediator.Send(command, cancellationToken);
 
             if (!response) return BadRequest();
             return Ok();
@@ -52,10 +51,10 @@ namespace CoronaAppZim.Api.Features.Notifications
         [Route("sms")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> SendSMS([FromBody] Message message, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> SendSMS([FromBody] SendSMSCommand.Command command, CancellationToken cancellationToken = default)
         {
-            var response = await this.notificationService.SendAsync(message, cancellationToken);
-            if(!response) return BadRequest();
+            var response = await this.mediator.Send(command, cancellationToken);
+            if (!response) return BadRequest();
 
             return Ok();
         }

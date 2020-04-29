@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CoronaAppZim.Api.Services;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,23 +13,23 @@ namespace CoronaAppZim.Api.Features.News
     [Route("api/[controller]")]
     public class NewsController : ControllerBase
     {
-        private readonly INewsService newsService;
+        private readonly IMediator mediator;
         private readonly ILogger<NewsController> logger;
 
-        public NewsController(INewsService newsService, ILogger<NewsController> logger)
+        public NewsController(IMediator mediator, ILogger<NewsController> logger)
         {
-            this.newsService = newsService ?? throw new ArgumentNullException(nameof(newsService));
+            this.mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         // GET: api/[controller]?query
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetLatestNews([FromQuery]string query, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> GetLatestNews([FromQuery]GetStoriesQuery.Request query, CancellationToken cancellationToken = default)
         {
             this.logger.LogInformation("--- fetching news");
 
-            var response = await this.newsService.GetStoriesAsync(query, cancellationToken);
+            var response = await this.mediator.Send(query, cancellationToken);
             var result = response.Articles.OrderByDescending(x => x.PublishedAt);
 
             return Ok(result);
