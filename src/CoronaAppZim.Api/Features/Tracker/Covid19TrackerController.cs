@@ -17,17 +17,16 @@ namespace CoronaAppZim.Api.Features.Tracker
 
         public Covid19TrackerController(IMediator mediator, ILogger<Covid19TrackerController> logger)
         {
-            this.mediator = mediator;
+            this.mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         // GET: api/[controller]?country
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> GetLatestReport([FromQuery]GetLatestReportQuery.Request country, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> GetLatestReport([FromQuery]GetLatestReportQuery.Request request, CancellationToken cancellationToken = default)
         {
-            var response = await this.mediator.Send(country, cancellationToken);
+            var response = await this.mediator.Send(request, cancellationToken);
             return Ok(response);
         }
     }

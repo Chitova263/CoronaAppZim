@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CoronaAppZim.Api.Config;
@@ -12,6 +13,7 @@ namespace CoronaAppZim.Api.Features.Notifications
         public class Command: IRequest<bool>
         {
             public string MobileNumber { get; set; }
+            public Guid Id { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, bool>
@@ -25,7 +27,7 @@ namespace CoronaAppZim.Api.Features.Notifications
                 this.options = options ?? throw new System.ArgumentNullException(nameof(options));
             }
 
-            public Task<bool> Handle(Command request, CancellationToken cancellationToken)
+            public Task<bool> Handle(Command command, CancellationToken cancellationToken)
             {
                 throw new System.NotImplementedException();
             }

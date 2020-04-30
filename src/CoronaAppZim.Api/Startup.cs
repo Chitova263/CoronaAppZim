@@ -26,14 +26,14 @@ namespace CoronaAppZim.Api
             services.AddControllers();
             services.AddHttpClient();
             services.AddCovid19Client();
-            services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(Startup));
             services.Configure<AWSSNSSettings>(Configuration.GetSection("AWSSNSConfig"));
             services.Configure<NewsApiSettings>(Configuration.GetSection("AWSSNSConfig"));
             services.AddSwaggerGen(config =>
             {
                 config.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Corona App Zimbabwe API",
+                    Title = "Corona App Zimbabwe",
                     Version = "v1",
                     Description = "Backend for coronazim.info",
                     License = new OpenApiLicense
@@ -42,6 +42,7 @@ namespace CoronaAppZim.Api
                         Url = new System.Uri("https://opensource.org/licenses/MIT")
                     },
                 });
+                config.CustomSchemaIds(x => x.FullName);
             });
         }
 
@@ -61,7 +62,7 @@ namespace CoronaAppZim.Api
 
             app.UseSwaggerUI(config =>
             {
-                config.SwaggerEndpoint("/swagger/v1/swagger.json", "Corona App Zimbabwe API");
+                config.SwaggerEndpoint("/swagger/v1/swagger.json", "Corona App Zimbabwe");
                 config.RoutePrefix = string.Empty;
             });
 

@@ -71,7 +71,7 @@ namespace CoronaAppZim.Api.Features.News
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get,
-                 $"https://newsapi.org/v2/everything?q={request.Query}&apiKey={this.options.CurrentValue.ApiKey}"
+                    $"https://newsapi.org/v2/everything?q={request.Query}&apiKey={this.options.CurrentValue.ApiKey}"
                 );
 
                 var client = httpClientFactory.CreateClient();
