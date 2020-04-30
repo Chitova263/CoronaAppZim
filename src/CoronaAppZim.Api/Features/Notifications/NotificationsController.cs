@@ -30,7 +30,7 @@ namespace CoronaAppZim.Api.Features.Notifications
             this.logger.LogInformation($"--- sending command @{typeof(SubscribeCommand).Name}");
 
             var commandResult = await this.mediator.Send(command, cancellationToken);
-
+            this.logger.LogInformation("command finished");
             if(!commandResult.IsSuccess)
             {
                 return BadRequest(commandResult);
@@ -69,7 +69,8 @@ namespace CoronaAppZim.Api.Features.Notifications
             this.logger.LogInformation($"--- sending command @{typeof(SendSMSCommand).Name}");
             
             var commandResult = await this.mediator.Send(command, cancellationToken);
-            
+         
+
             if(!commandResult.IsSuccess)
             {
                 return BadRequest(commandResult);

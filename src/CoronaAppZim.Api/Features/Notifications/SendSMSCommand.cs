@@ -33,7 +33,7 @@ namespace CoronaAppZim.Api.Features.Notifications
                 var _snsClient = new AmazonSimpleNotificationServiceClient(
                     this.options.CurrentValue.AWSAccessKeyId,
                     this.options.CurrentValue.AwsSecretAccessKey,
-                    Amazon.RegionEndpoint.USEast1
+                    Amazon.RegionEndpoint.USWest2
                 );
 
                 var messageAttributes = new Dictionary<string, MessageAttributeValue>();
