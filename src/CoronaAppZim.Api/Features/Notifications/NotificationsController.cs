@@ -27,9 +27,15 @@ namespace CoronaAppZim.Api.Features.Notifications
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Suscribe([FromBody] SubscribeCommand.Command command, CancellationToken cancellationToken = default)
         {
-            var response = await this.mediator.Send(command, cancellationToken);
+            this.logger.LogInformation($"--- sending command @{typeof(SubscribeCommand)}");
 
-            if (!response) return BadRequest();
+            var commandResult = await this.mediator.Send(command, cancellationToken);
+
+            if(!commandResult.IsSuccess)
+            {
+                return BadRequest(commandResult);
+            }
+
             return Ok();
         }
 
@@ -40,9 +46,16 @@ namespace CoronaAppZim.Api.Features.Notifications
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UnSuscribe([FromBody] UnSubscribeCommand.Command command, CancellationToken cancellationToken = default)
         {
-            var response = await this.mediator.Send(command, cancellationToken);
 
-            if (!response) return BadRequest();
+            this.logger.LogInformation($"--- sending command @{typeof(UnSubscribeCommand)}");
+
+            var commandResult = await this.mediator.Send(command, cancellationToken);
+
+            if(!commandResult.IsSuccess)
+            {
+                return BadRequest(commandResult);
+            }
+
             return Ok();
         }
 
@@ -53,8 +66,14 @@ namespace CoronaAppZim.Api.Features.Notifications
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> SendSMS([FromBody] SendSMSCommand.Command command, CancellationToken cancellationToken = default)
         {
-            var response = await this.mediator.Send(command, cancellationToken);
-            if (!response) return BadRequest();
+            this.logger.LogInformation($"--- sending command @{typeof(SendSMSCommand)}");
+            
+            var commandResult = await this.mediator.Send(command, cancellationToken);
+            
+            if(!commandResult.IsSuccess)
+            {
+                return BadRequest(commandResult);
+            }
 
             return Ok();
         }

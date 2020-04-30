@@ -12,22 +12,25 @@ namespace CoronaAppZim.Api.Features.Notifications
 {
     public class SubscribeCommand
     {
-        public class Command: IRequest<bool>
+        public class Command: IRequest<CommandResult>
         {
             public string MobileNumber { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, bool>
+
+        public class Handler : IRequestHandler<Command, CommandResult>
         {
+            private readonly IMediator mediator;
             private readonly ILogger<Handler> logger;
             private readonly IOptionsMonitor<AWSSNSSettings> options;
 
-            public Handler(ILogger<Handler> logger, IOptionsMonitor<AWSSNSSettings> options)
+            public Handler(IMediator mediator, ILogger<Handler> logger, IOptionsMonitor<AWSSNSSettings> options)
             {
+                this.mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
                 this.logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
                 this.options = options ?? throw new System.ArgumentNullException(nameof(options));
             }
-            public async Task<bool> Handle(Command command, CancellationToken cancellationToken)
+            public async Task<CommandResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 var _snsClient = new AmazonSimpleNotificationServiceClient(
                     this.options.CurrentValue.AWSAccessKeyId,
@@ -35,7 +38,7 @@ namespace CoronaAppZim.Api.Features.Notifications
                     Amazon.RegionEndpoint.USEast1
                 );
 
-                 var subscribeRequest = new SubscribeRequest
+                var subscribeRequest = new SubscribeRequest
                 {
                     TopicArn = this.options.CurrentValue.TopicArn,
                     Protocol = "sms",
@@ -46,13 +49,18 @@ namespace CoronaAppZim.Api.Features.Notifications
 
                 if(subscribeResponse.HttpStatusCode == HttpStatusCode.OK)
                 {
-                    this.logger.LogInformation($"--- subscription successful");
-                    return true;
+                    this.logger.LogInformation($"--- subscription successful @id: {subscribeResponse.ResponseMetadata.RequestId}");
+                    
+                    var @event = new SMSSubscriptionSucceededEvent(command.MobileNumber);
+                    
+                    await mediator.Publish(@event);
+
+                    return CommandResult.Success();
                 }
 
                 this.logger.LogInformation($"--- subscription failed");
 
-                return false;
+                return CommandResult.Fail(subscribeResponse.ResponseMetadata);
             }
         }
     }

@@ -10,13 +10,13 @@ namespace CoronaAppZim.Api.Features.Notifications
 {
     public class UnSubscribeCommand
     {
-        public class Command: IRequest<bool>
+        public class Command: IRequest<CommandResult>
         {
             public string MobileNumber { get; set; }
             public Guid Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, bool>
+        public class Handler : IRequestHandler<Command, CommandResult>
         {
             private readonly ILogger<Handler> logger;
             private readonly IOptionsMonitor<AWSSNSSettings> options;
@@ -27,7 +27,7 @@ namespace CoronaAppZim.Api.Features.Notifications
                 this.options = options ?? throw new System.ArgumentNullException(nameof(options));
             }
 
-            public Task<bool> Handle(Command command, CancellationToken cancellationToken)
+            public Task<CommandResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 throw new System.NotImplementedException();
             }

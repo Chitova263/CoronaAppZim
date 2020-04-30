@@ -13,12 +13,12 @@ namespace CoronaAppZim.Api.Features.Notifications
 {
     public class SendSMSCommand
     {
-        public class Command: IRequest<bool>
+        public class Command: IRequest<CommandResult>
         {
             public string Payload { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, bool>
+        public class Handler : IRequestHandler<Command, CommandResult>
         {
             private readonly ILogger<Handler> logger;
             private readonly IOptionsMonitor<AWSSNSSettings> options;
@@ -28,7 +28,7 @@ namespace CoronaAppZim.Api.Features.Notifications
                 this.logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
                 this.options = options ?? throw new System.ArgumentNullException(nameof(options));
             }
-            public async Task<bool> Handle(Command command, CancellationToken cancellationToken)
+            public async Task<CommandResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 var _snsClient = new AmazonSimpleNotificationServiceClient(
                     this.options.CurrentValue.AWSAccessKeyId,
@@ -59,12 +59,12 @@ namespace CoronaAppZim.Api.Features.Notifications
                 if(publishResponse.HttpStatusCode == HttpStatusCode.OK)
                 {
                     this.logger.LogInformation($"--- sms sending successful {publishResponse.MessageId} ");
-                    return true;
+                    return CommandResult.Success();
                 }
 
                 this.logger.LogError("--- sending message failed");
 
-                return false;
+                return CommandResult.Fail(publishResponse.ResponseMetadata);
             }
         }
     }
