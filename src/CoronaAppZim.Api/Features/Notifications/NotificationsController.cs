@@ -27,7 +27,7 @@ namespace CoronaAppZim.Api.Features.Notifications
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Suscribe([FromBody] SubscribeCommand.Command command, CancellationToken cancellationToken = default)
         {
-            this.logger.LogInformation($"--- sending command @{typeof(SubscribeCommand)}");
+            this.logger.LogInformation($"--- sending command @{typeof(SubscribeCommand).Name}");
 
             var commandResult = await this.mediator.Send(command, cancellationToken);
 
@@ -66,7 +66,7 @@ namespace CoronaAppZim.Api.Features.Notifications
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> SendSMS([FromBody] SendSMSCommand.Command command, CancellationToken cancellationToken = default)
         {
-            this.logger.LogInformation($"--- sending command @{typeof(SendSMSCommand)}");
+            this.logger.LogInformation($"--- sending command @{typeof(SendSMSCommand).Name}");
             
             var commandResult = await this.mediator.Send(command, cancellationToken);
             
