@@ -49,6 +49,7 @@ namespace CoronaAppZim.Api.Features.Notifications
 
                 if(subscribeResponse.HttpStatusCode == HttpStatusCode.OK)
                 {
+
                     this.logger.LogInformation($"--- subscription successful @id: {subscribeResponse.ResponseMetadata.RequestId}");
                     
                     var @event = new SMSSubscriptionSucceededEvent(command.MobileNumber);

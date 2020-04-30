@@ -47,7 +47,7 @@ namespace CoronaAppZim.Api.Features.Notifications
         public async Task<ActionResult> UnSuscribe([FromBody] UnSubscribeCommand.Command command, CancellationToken cancellationToken = default)
         {
 
-            this.logger.LogInformation($"--- sending command @{typeof(UnSubscribeCommand)}");
+            this.logger.LogInformation($"--- sending command @{typeof(UnSubscribeCommand).Name}");
 
             var commandResult = await this.mediator.Send(command, cancellationToken);
 
