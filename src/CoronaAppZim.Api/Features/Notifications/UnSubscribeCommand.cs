@@ -4,7 +4,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.SimpleNotificationService;
-using CoronaAppZim.Api.Config;
+using CoronaAppZim.Api.Configuration;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
