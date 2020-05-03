@@ -4,10 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Covid19.Client;
-using CoronaAppZim.Api.Config;
+using CoronaAppZim.Api.Configuration;
 using Microsoft.OpenApi.Models;
 using MediatR;
-using System.Reflection;
 
 namespace CoronaAppZim.Api
 {
