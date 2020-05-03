@@ -1,5 +1,4 @@
-﻿using System;
-namespace CoronaAppZim.Api.Config
+﻿namespace CoronaAppZim.Api.Configuration
 {
     public class NewsApiSettings
     {

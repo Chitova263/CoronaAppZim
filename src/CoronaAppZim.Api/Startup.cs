@@ -27,7 +27,16 @@ namespace CoronaAppZim.Api
             services.AddHttpClient();
             services.AddCovid19Client();
             services.AddMediatR(typeof(Startup));
+            
+            //enable configuration validation via attributes
+            //however validation is only checked once first time at startup
+            //becomes buggy if using IOptionsSnapShot<T> which is scoped
+            services.AddOptions<AWSSNSSettings>()
+                .Bind(Configuration.GetSection("AWSSNSSettings"))
+                .ValidateDataAnnotations();
+                  
             services.Configure<AWSSNSSettings>(Configuration.GetSection("AWSSNSConfig"));
+
             services.Configure<NewsApiSettings>(Configuration.GetSection("NewsApiConfig"));
             services.AddSwaggerGen(config =>
             {
