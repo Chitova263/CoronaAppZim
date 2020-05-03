@@ -28,7 +28,7 @@ namespace CoronaAppZim.Api
             services.AddCovid19Client();
             services.AddMediatR(typeof(Startup));
             services.Configure<AWSSNSSettings>(Configuration.GetSection("AWSSNSConfig"));
-            services.Configure<NewsApiSettings>(Configuration.GetSection("AWSSNSConfig"));
+            services.Configure<NewsApiSettings>(Configuration.GetSection("NewsApiConfig"));
             services.AddSwaggerGen(config =>
             {
                 config.SwaggerDoc("v1", new OpenApiInfo
