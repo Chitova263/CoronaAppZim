@@ -22,9 +22,9 @@ namespace CoronaAppZim.Api.Features.Notifications
         {
             private readonly IMediator mediator;
             private readonly ILogger<Handler> logger;
-            private readonly IOptionsMonitor<AWSSNSSettings> options;
+            private readonly IOptions<AWSSNSSettings> options;
 
-            public Handler(IMediator mediator, ILogger<Handler> logger, IOptionsMonitor<AWSSNSSettings> options)
+            public Handler(IMediator mediator, ILogger<Handler> logger, IOptions<AWSSNSSettings> options)
             {
                 this.mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
                 this.logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
@@ -34,12 +34,12 @@ namespace CoronaAppZim.Api.Features.Notifications
             public async Task<CommandResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 var _snsClient = new AmazonSimpleNotificationServiceClient(
-                    this.options.CurrentValue.AWSAccessKeyId,
-                    this.options.CurrentValue.AwsSecretAccessKey,
+                    this.options.Value.AWSAccessKeyId,
+                    this.options.Value.AwsSecretAccessKey,
                     Amazon.RegionEndpoint.USWest2
                 );
 
-                var subscriptions = await _snsClient.ListSubscriptionsByTopicAsync(this.options.CurrentValue.TopicArn, cancellationToken);
+                var subscriptions = await _snsClient.ListSubscriptionsByTopicAsync(this.options.Value.TopicArn, cancellationToken);
                 var subscriptionARN = subscriptions.Subscriptions
                     .FirstOrDefault(x => x.Endpoint == command.MobileNumber);
 

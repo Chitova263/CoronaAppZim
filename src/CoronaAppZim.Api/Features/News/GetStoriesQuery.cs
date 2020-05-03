@@ -59,10 +59,10 @@ namespace CoronaAppZim.Api.Features.News
         public class Handler : IRequestHandler<Request, Response>
         {
             private readonly IHttpClientFactory httpClientFactory;
-            private readonly IOptionsMonitor<NewsApiSettings> options;
+            private readonly IOptions<NewsApiSettings> options;
             private readonly ILogger<Handler> logger;
 
-            public Handler(IHttpClientFactory httpClientFactory, IOptionsMonitor<NewsApiSettings> options, ILogger<Handler> logger)
+            public Handler(IHttpClientFactory httpClientFactory, IOptions<NewsApiSettings> options, ILogger<Handler> logger)
             {
                 this.httpClientFactory = httpClientFactory ?? throw new System.ArgumentNullException(nameof(httpClientFactory));
                 this.options = options ?? throw new System.ArgumentNullException(nameof(options));
@@ -71,7 +71,7 @@ namespace CoronaAppZim.Api.Features.News
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get,
-                    $"https://newsapi.org/v2/everything?q={request.Query}&apiKey={this.options.CurrentValue.ApiKey}"
+                    $"https://newsapi.org/v2/everything?q={request.Query}&apiKey={this.options.Value.ApiKey}"
                 );
 
                 var client = httpClientFactory.CreateClient();

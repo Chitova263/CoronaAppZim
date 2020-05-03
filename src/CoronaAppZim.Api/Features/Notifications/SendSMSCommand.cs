@@ -21,9 +21,9 @@ namespace CoronaAppZim.Api.Features.Notifications
         public class Handler : IRequestHandler<Command, CommandResult>
         {
             private readonly ILogger<Handler> logger;
-            private readonly IOptionsMonitor<AWSSNSSettings> options;
+            private readonly IOptions<AWSSNSSettings> options;
 
-            public Handler(ILogger<Handler> logger, IOptionsMonitor<AWSSNSSettings> options)
+            public Handler(ILogger<Handler> logger, IOptions<AWSSNSSettings> options)
             {
                 this.logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
                 this.options = options ?? throw new System.ArgumentNullException(nameof(options));
@@ -31,8 +31,8 @@ namespace CoronaAppZim.Api.Features.Notifications
             public async Task<CommandResult> Handle(Command command, CancellationToken cancellationToken)
             {
                 var _snsClient = new AmazonSimpleNotificationServiceClient(
-                    this.options.CurrentValue.AWSAccessKeyId,
-                    this.options.CurrentValue.AwsSecretAccessKey,
+                    this.options.Value.AWSAccessKeyId,
+                    this.options.Value.AwsSecretAccessKey,
                     Amazon.RegionEndpoint.USWest2
                 );
 
@@ -51,7 +51,7 @@ namespace CoronaAppZim.Api.Features.Notifications
                 {
                     Message = command.Payload,
                     MessageAttributes = messageAttributes,
-                    TopicArn = options.CurrentValue.TopicArn,
+                    TopicArn = options.Value.TopicArn,
                 };
 
                 var publishResponse = await _snsClient.PublishAsync(pubRequest, cancellationToken);
