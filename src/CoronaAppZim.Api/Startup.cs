@@ -24,12 +24,18 @@ namespace CoronaAppZim.Api
         {
             services.AddControllers();
             services.AddHttpClient();
+            services.AddCors(x => {
+                x.AddPolicy("CoronaAppPolicy", builder => {
+                    builder.WithOrigins("www.coronazim.info");
+                });
+            });
             services.AddCovid19Client();
             services.AddMediatR(typeof(Startup));
             
             //enable configuration validation via attributes
             //however validation is only checked once first time at startup
             //becomes buggy if using IOptionsSnapShot<T> which is scoped
+            //also see IValidateOptions
             services.AddOptions<AWSSNSSettings>()
                 .Bind(Configuration.GetSection("AWSSNSSettings"))
                 .ValidateDataAnnotations();
@@ -64,7 +70,18 @@ namespace CoronaAppZim.Api
 
             app.UseHttpsRedirection();
 
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            if (env.IsDevelopment())
+            {
+                app.UseCors(builder => {
+                    builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            } 
+            else
+            {
+                app.UseCors("CoronaAppPolicy");
+            }
 
             app.UseSwagger();
 

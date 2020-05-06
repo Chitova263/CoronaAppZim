@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ namespace CoronaAppZim.Api.Features.News
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("CoronaAppPolicy")]
     public class NewsController : ControllerBase
     {
         private readonly IMediator mediator;

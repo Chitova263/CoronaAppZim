@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ namespace CoronaAppZim.Api.Features.Tracker
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("CoronaAppPolicy")]
     public class Covid19TrackerController : ControllerBase
     {
         private readonly IMediator mediator;
