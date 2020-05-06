@@ -71,10 +71,17 @@ namespace CoronaAppZim.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                //Enable HSTS HTTP Strict Transport Security in production
+                app.UseHsts();
+            }
 
             //Add security headers 
             //Use NWebSec Middleware
 
+
+            // Require HTTPS
             app.UseHttpsRedirection();
 
             // Global CORS policy
@@ -89,6 +96,7 @@ namespace CoronaAppZim.Api
                 config.RoutePrefix = string.Empty;
             });
 
+            //if you have multiple cors policy the routing middleware should be placed before the cors middleware
             app.UseRouting();
 
             app.UseAuthorization();
