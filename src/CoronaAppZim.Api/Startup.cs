@@ -24,12 +24,15 @@ namespace CoronaAppZim.Api
         {
             services.AddControllers();
             services.AddHttpClient();
+
             var allowedOrigins = Configuration.GetSection("CorsPolicy:AllowedOrigins").Value.Split(",") ?? new string[0];
-            services.AddCors(x => {
-                x.AddPolicy("CoronaAppPolicy", builder => {
+            services.AddCors(options => {
+                options.AddPolicy("CoronaAppPolicy", builder => {
                     builder.WithOrigins(allowedOrigins);
                 });
+                //you can add another CORS policy here
             });
+
             services.AddCovid19Client();
             services.AddMediatR(typeof(Startup));
             
@@ -69,23 +72,15 @@ namespace CoronaAppZim.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            //add security headers
+            //Add security headers 
+            //Use NWebSec Middleware
 
             app.UseHttpsRedirection();
 
-            if (env.IsDevelopment())
-            {
-                app.UseCors(builder => {
-                    builder.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-                });
-            } 
-            else
-            {
-                app.UseCors("CoronaAppPolicy");
-            }
-
+            // Global CORS policy
+            // Can be overriden by specifying EnableCors on the Controller methods
+            app.UseCors("CoronaAppPolicy");
+            
             app.UseSwagger();
 
             app.UseSwaggerUI(config =>
