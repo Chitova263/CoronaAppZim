@@ -24,9 +24,10 @@ namespace CoronaAppZim.Api
         {
             services.AddControllers();
             services.AddHttpClient();
+            var allowedOrigins = Configuration.GetSection("CorsPolicy:AllowedOrigins").Value.Split(",") ?? new string[0];
             services.AddCors(x => {
                 x.AddPolicy("CoronaAppPolicy", builder => {
-                    builder.WithOrigins("www.coronazim.info");
+                    builder.WithOrigins(allowedOrigins);
                 });
             });
             services.AddCovid19Client();
@@ -67,6 +68,8 @@ namespace CoronaAppZim.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            //add security headers
 
             app.UseHttpsRedirection();
 
