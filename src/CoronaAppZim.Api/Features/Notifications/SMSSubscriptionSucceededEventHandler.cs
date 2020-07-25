@@ -49,7 +49,7 @@ namespace CoronaAppZim.Api.Features.Notifications
                 PhoneNumber = notification.MobileNumber,
             };
 
-            //BUG
+            //BUG https://github.com/jbogard/MediatR/issues/237
             //have a notification handler for EntityUpdated notification, which would ideally do as little work as possible, i.e. store it somewhere that we need to send the email -- this could be some sort of message queue, or just a database table, or you could schedule a background task (e. g. using Hangfire);
             //have a background job that handles all sms sending, which can, ideally, do retries when the email server is unavailable.
             var publishResponse = await _snsClient.PublishAsync(pubRequest, cancellationToken);
