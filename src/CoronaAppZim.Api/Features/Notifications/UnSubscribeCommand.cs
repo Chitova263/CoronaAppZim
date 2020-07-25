@@ -13,12 +13,12 @@ namespace CoronaAppZim.Api.Features.Notifications
 {
     public class UnSubscribeCommand
     {
-        public class Command: IRequest<CommandResult>
+        public class Command: IRequest<Result>
         {
             public string MobileNumber { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, CommandResult>
+        public class Handler : IRequestHandler<Command, Result>
         {
             private readonly IMediator mediator;
             private readonly ILogger<Handler> logger;
@@ -31,7 +31,7 @@ namespace CoronaAppZim.Api.Features.Notifications
                 this.options = options ?? throw new System.ArgumentNullException(nameof(options));
             }
 
-            public async Task<CommandResult> Handle(Command command, CancellationToken cancellationToken)
+            public async Task<Result> Handle(Command command, CancellationToken cancellationToken)
             {
                 var _snsClient = new AmazonSimpleNotificationServiceClient(
                     this.options.Value.AWSAccessKeyId,
@@ -53,12 +53,12 @@ namespace CoronaAppZim.Api.Features.Notifications
                     
                     await this.mediator.Publish(@event);
 
-                    return CommandResult.Success();
+                    return Result.Success();
                 }
 
                 this.logger.LogInformation($"--- unsubscription unsuccessful");
 
-                return CommandResult.Fail(response.ResponseMetadata);
+                return Result.Fail("unsubscription unsuccessful");
 
             }
         }

@@ -12,13 +12,13 @@ namespace CoronaAppZim.Api.Features.Notifications
 {
     public class SubscribeCommand
     {
-        public class Command: IRequest<CommandResult>
+        public class Command: IRequest<Result>
         {
             public string MobileNumber { get; set; }
         }
 
 
-        public class Handler : IRequestHandler<Command, CommandResult>
+        public class Handler : IRequestHandler<Command, Result>
         {
             private readonly IMediator mediator;
             private readonly ILogger<Handler> logger;
@@ -30,7 +30,7 @@ namespace CoronaAppZim.Api.Features.Notifications
                 this.logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
                 this.options = options ?? throw new System.ArgumentNullException(nameof(options));
             }
-            public async Task<CommandResult> Handle(Command command, CancellationToken cancellationToken)
+            public async Task<Result> Handle(Command command, CancellationToken cancellationToken)
             {
                 var _snsClient = new AmazonSimpleNotificationServiceClient(
                     this.options.Value.AWSAccessKeyId,
@@ -56,12 +56,12 @@ namespace CoronaAppZim.Api.Features.Notifications
                     
                     await mediator.Publish(@event);
 
-                    return CommandResult.Success();
+                    return Result.Success();
                 }
 
                 this.logger.LogInformation($"--- subscription failed");
 
-                return CommandResult.Fail(subscribeResponse.ResponseMetadata);
+                return Result.Fail("subscription failed");
             }
         }
     }

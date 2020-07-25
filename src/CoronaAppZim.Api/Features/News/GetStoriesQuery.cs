@@ -15,7 +15,7 @@ namespace CoronaAppZim.Api.Features.News
 {
     public class GetStoriesQuery
     {
-       public class Request: IRequest<Response>
+       public class Request: IRequest<Result<Response>>
        {
            public string Query { get; set; }
        }
@@ -56,7 +56,7 @@ namespace CoronaAppZim.Api.Features.News
             }
         }
 
-        public class Handler : IRequestHandler<Request, Response>
+        public class Handler : IRequestHandler<Request, Result<Response>>
         {
             private readonly IHttpClientFactory httpClientFactory;
             private readonly IOptions<NewsApiSettings> options;
@@ -68,7 +68,7 @@ namespace CoronaAppZim.Api.Features.News
                 this.options = options ?? throw new System.ArgumentNullException(nameof(options));
                 this.logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
             }
-            public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
+            public async Task<Result<Response>> Handle(Request request, CancellationToken cancellationToken)
             {
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get,
                     $"https://newsapi.org/v2/everything?q={request.Query}&apiKey={this.options.Value.ApiKey}"
@@ -80,21 +80,18 @@ namespace CoronaAppZim.Api.Features.News
 
                 var response = await client.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
-                if (response.IsSuccessStatusCode)
+                if(!response.IsSuccessStatusCode)
+                    return Result<Response>.Fail(response.ReasonPhrase);
+                
+                var contentStream = await response.Content.ReadAsStreamAsync();
+
+                using (var streamReader = new StreamReader(contentStream, Encoding.UTF8))
+                using (var textReader = new JsonTextReader(streamReader))
                 {
-                    var contentStream = await response.Content.ReadAsStreamAsync();
-
-                    //read the stream using a stream reader
-                    using (var streamReader = new StreamReader(contentStream, Encoding.UTF8))
-                    using (var textReader = new JsonTextReader(streamReader))
-                    {
-                        var jsonSerializer = new JsonSerializer();
-                        var stories = jsonSerializer.Deserialize<Response>(textReader);
-                        return stories;
-                    }
+                    var jsonSerializer = new JsonSerializer();
+                    var stories = jsonSerializer.Deserialize<Response>(textReader);
+                    return Result<Response>.Success(stories);
                 }
-
-                return null;
             }
         }
     }

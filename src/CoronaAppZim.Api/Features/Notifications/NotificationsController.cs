@@ -34,9 +34,7 @@ namespace CoronaAppZim.Api.Features.Notifications
             var commandResult = await this.mediator.Send(command, cancellationToken);
             this.logger.LogInformation("command finished");
             if(!commandResult.IsSuccess)
-            {
-                return BadRequest(commandResult);
-            }
+                return BadRequest(commandResult.FailureReason);
 
             return Ok();
         }
@@ -54,9 +52,7 @@ namespace CoronaAppZim.Api.Features.Notifications
             var commandResult = await this.mediator.Send(command, cancellationToken);
 
             if(!commandResult.IsSuccess)
-            {
-                return BadRequest(commandResult);
-            }
+                return BadRequest(commandResult.FailureReason);
 
             return Ok();
         }
@@ -72,11 +68,8 @@ namespace CoronaAppZim.Api.Features.Notifications
             
             var commandResult = await this.mediator.Send(command, cancellationToken);
          
-
             if(!commandResult.IsSuccess)
-            {
-                return BadRequest(commandResult);
-            }
+                return BadRequest(commandResult.FailureReason);
 
             return Ok();
         }

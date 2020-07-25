@@ -32,7 +32,12 @@ namespace CoronaAppZim.Api.Features.News
             this.logger.LogInformation("--- fetching news");
 
             var response = await this.mediator.Send(query, cancellationToken);
-            var result = response.Articles.OrderByDescending(x => x.PublishedAt);
+            
+            if(response.IsFailure)
+                return BadRequest(response.FailureReason);
+
+            var result = response.Value.Articles
+                .OrderByDescending(x => x.PublishedAt);
 
             return Ok(result);
         }
