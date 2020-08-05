@@ -6,7 +6,3 @@
 
 **URL**: https://covid-zim.herokuapp.com
 
-## Build
-```bash
-docker build . -t $APP_NAME -f Dockerfile
-```
