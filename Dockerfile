@@ -1,19 +1,16 @@
 # nuget restore
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
-WORKDIR /src
+WORKDIR /app
 COPY *.sln .
-COPY CoronaAppZim.API/*.csproj CoronaAppZim.API/
+COPY CoronaAppZim.API/*.csproj ./
 RUN dotnet restore
-COPY . .
 
-# publish
-FROM build AS publish
-WORKDIR /src/CoronaAppZim.API
-RUN dotnet publish -c Release -o /src/publish
+COPY . ./
+RUN dotnet publish -c Release -o out
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS runtime
 WORKDIR /app
-COPY --from=publish /src/publish .
+COPY --from=publish /app/out .
 # ENTRYPOINT ["dotnet", "CoronaAppZim.Api.dll"]
 # heroku uses the following
 CMD ASPNETCORE_URLS=http://*:$PORT dotnet  CoronaAppZim.Api.dll
