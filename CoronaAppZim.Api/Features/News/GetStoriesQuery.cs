@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CoronaAppZim.Api.Configuration;
@@ -83,15 +81,9 @@ namespace CoronaAppZim.Api.Features.News
                 if(!response.IsSuccessStatusCode)
                     return Result.Fail<Response>(response.ReasonPhrase);
                 
-                var contentStream = await response.Content.ReadAsStreamAsync();
-
-                using (var streamReader = new StreamReader(contentStream, Encoding.UTF8))
-                using (var textReader = new JsonTextReader(streamReader))
-                {
-                    var jsonSerializer = new JsonSerializer();
-                    var stories = jsonSerializer.Deserialize<Response>(textReader);
-                    return Result.Success(stories);
-                }
+                var content =  await response.Content.ReadAsStringAsync();
+                var stories = JsonConvert.DeserializeObject<Response>(content);
+                return Result.Success(stories);
             }
         }
     }
