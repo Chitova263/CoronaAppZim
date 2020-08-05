@@ -25,15 +25,17 @@ namespace CoronaAppZim.Api
             services.AddControllers();
             services.AddHttpClient();
 
-            var allowedOrigins = Configuration.GetSection("CorsPolicy:AllowedOrigins").Value.Split(",") ?? new string[0];
-            services.AddCors(options => {
-                options.AddPolicy("CoronaAppPolicy", builder => {
-                    builder.WithOrigins(allowedOrigins);
-                });
-                //you can add another CORS policy here
-            });
+            //var allowedOrigins = Configuration.GetSection("CorsPolicy:AllowedOrigins").Value.Split(",") ?? new string[0];
+            //services.AddCors(options => {
+            //    options.AddPolicy("CoronaAppPolicy", builder => {
+            //        builder.WithOrigins(allowedOrigins);
+            //    });
+            //    //you can add another CORS policy here
+            //});
 
-            services.AddCovid19Client();
+            services.AddCors();
+
+            services.AddTransient<ICovid19Client, Covid19Client>();
             services.AddMediatR(typeof(Startup));
             
             //enable configuration validation via attributes
@@ -84,10 +86,6 @@ namespace CoronaAppZim.Api
             // Require HTTPS
             app.UseHttpsRedirection();
 
-            // Global CORS policy
-            // Can be overriden by specifying EnableCors on the Controller methods
-            app.UseCors("CoronaAppPolicy");
-            
             app.UseSwagger();
 
             app.UseSwaggerUI(config =>
@@ -98,6 +96,9 @@ namespace CoronaAppZim.Api
 
             //if you have multiple cors policy the routing middleware should be placed before the cors middleware
             app.UseRouting();
+
+            //use cors must be between UseRouting() and UseEndPoints() but before UseAuthorisation
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
             app.UseAuthorization();
 

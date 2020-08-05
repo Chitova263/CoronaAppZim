@@ -11,7 +11,6 @@ namespace CoronaAppZim.Api.Features.Tracker
 {
     [ApiController]
     [Route("api/[controller]")]
-    [EnableCors("CoronaAppPolicy")]
     public class Covid19TrackerController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -29,7 +28,12 @@ namespace CoronaAppZim.Api.Features.Tracker
         public async Task<ActionResult> GetLatestReport([FromQuery]GetLatestReportQuery.Request request, CancellationToken cancellationToken = default)
         {
             var response = await this.mediator.Send(request, cancellationToken);
-            return Ok(response);
+
+            if (response.IsFailure)
+                return BadRequest(response.FailureReason);
+
+
+            return Ok(response.Value);
         }
     }
 }

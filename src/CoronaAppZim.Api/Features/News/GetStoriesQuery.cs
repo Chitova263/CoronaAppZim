@@ -81,7 +81,7 @@ namespace CoronaAppZim.Api.Features.News
                 var response = await client.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
                 if(!response.IsSuccessStatusCode)
-                    return Result<Response>.Fail(response.ReasonPhrase);
+                    return Result.Fail<Response>(response.ReasonPhrase);
                 
                 var contentStream = await response.Content.ReadAsStreamAsync();
 
@@ -90,7 +90,7 @@ namespace CoronaAppZim.Api.Features.News
                 {
                     var jsonSerializer = new JsonSerializer();
                     var stories = jsonSerializer.Deserialize<Response>(textReader);
-                    return Result<Response>.Success(stories);
+                    return Result.Success(stories);
                 }
             }
         }

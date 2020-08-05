@@ -12,7 +12,6 @@ namespace CoronaAppZim.Api.Features.News
 {
     [ApiController]
     [Route("api/[controller]")]
-    [EnableCors("CoronaAppPolicy")]
     public class NewsController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -27,15 +26,16 @@ namespace CoronaAppZim.Api.Features.News
         // GET: api/[controller]?query
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetLatestNews([FromQuery]GetStoriesQuery.Request query, CancellationToken cancellationToken = default)
+        public async Task<ActionResult> GetLatestNews([FromQuery]GetStoriesQuery.Request request, CancellationToken cancellationToken = default)
         {
             this.logger.LogInformation("--- fetching news");
 
-            var response = await this.mediator.Send(query, cancellationToken);
-            
+            var response = await this.mediator.Send(request, cancellationToken);
+          
             if(response.IsFailure)
                 return BadRequest(response.FailureReason);
 
+           
             var result = response.Value.Articles
                 .OrderByDescending(x => x.PublishedAt);
 
