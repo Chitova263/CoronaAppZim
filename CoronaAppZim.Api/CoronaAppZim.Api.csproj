@@ -3,15 +3,24 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Config\**" />
+    <Compile Remove="Services\**" />
+    <Content Remove="Config\**" />
+    <Content Remove="Services\**" />
+    <EmbeddedResource Remove="Config\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Config\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
     
     
   <ItemGroup>
-    <Folder Include="Services\" />
     <Folder Include="Features\" />
     <Folder Include="Features\News\" />
     <Folder Include="Features\Notifications\" />
     <Folder Include="Features\Tracker\" />
-    <Folder Include="Config\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AWSSDK.Core" Version="3.3.107.35" />
